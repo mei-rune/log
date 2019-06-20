@@ -200,7 +200,11 @@ func (empty emptyLogger) WithTargets(targets ...Target) Logger {
 func (empty emptyLogger) Unwrap() *zap.Logger { return nil }
 
 // Empty a nil logger
-var Empty Logger = emptyLogger{}
+var empty Logger = emptyLogger{}
+
+func Empty() Logger {
+	return empty
+}
 
 type loggerKey struct{}
 
@@ -229,5 +233,5 @@ func LoggerOrEmptyFromContext(ctx context.Context) Logger {
 	if sp, ok := val.(Logger); ok {
 		return sp
 	}
-	return Empty
+	return empty
 }

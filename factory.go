@@ -100,5 +100,5 @@ func For(ctx context.Context, args ...interface{}) (Logger, func()) {
 var noop = func() {}
 
 func IsEmpty(logger Logger) bool {
-	return logger == Empty
+	return logger == empty
 }
