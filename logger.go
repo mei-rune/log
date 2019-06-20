@@ -141,7 +141,7 @@ func (l zaplogger) With(fields ...Field) Logger {
 
 // With creates a child logger, and optionally adds some context fields to that logger.
 func (l zaplogger) WithTargets(targets ...Target) Logger {
-	if len(targets) > 0 {
+	if len(targets) == 0 {
 		return l
 	}
 	newL := l.logger.WithOptions(zap.AddCallerSkip(1))
@@ -192,7 +192,7 @@ func (empty emptyLogger) Fatalf(msg string, values ...interface{}) {}
 func (empty emptyLogger) With(fields ...Field) Logger { return empty }
 func (empty emptyLogger) Named(name string) Logger    { return empty }
 func (empty emptyLogger) WithTargets(targets ...Target) Logger {
-	if len(targets) > 0 {
+	if len(targets) == 0 {
 		return empty
 	}
 	return appendLogger{logger: empty, target: Tee(targets)}

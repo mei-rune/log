@@ -125,7 +125,7 @@ func (l appendLogger) With(fields ...Field) Logger {
 
 // With creates a child logger, and optionally adds some context fields to that logger.
 func (l appendLogger) WithTargets(targets ...Target) Logger {
-	if len(targets) > 0 {
+	if len(targets) == 0 {
 		return l
 	}
 	return appendLogger{logger: l.logger, target: ConcatTargets(l.target, targets...)}
