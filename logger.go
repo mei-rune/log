@@ -22,6 +22,7 @@ import (
 
 // Logger is a simplified abstraction of the zap.Logger
 type Logger interface {
+	Sync() error
 	Panic(msg string, fields ...Field)
 	Debug(msg string, fields ...Field)
 	Info(msg string, fields ...Field)
@@ -51,6 +52,10 @@ type Logger interface {
 type zaplogger struct {
 	logger  *zap.Logger
 	sugared *zap.SugaredLogger
+}
+
+func (l zaplogger) Sync() error {
+	return l.logger.Sync()
 }
 
 // Panic logs an panic msg with fields and panic
@@ -168,6 +173,7 @@ func NewLogger(logger *zap.Logger) Logger {
 // Logger is a simplified abstraction of the zap.Logger
 type emptyLogger struct{}
 
+func (empty emptyLogger) Sync() error { return nil }
 func (empty emptyLogger) Panic(msg string, fields ...Field) {
 	panic(msg)
 }

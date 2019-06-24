@@ -27,6 +27,10 @@ type appendLogger struct {
 	target Target
 }
 
+func (l appendLogger) Sync() error {
+	return l.logger.Sync()
+}
+
 // Panic logs an panic msg with fields and panic
 func (l appendLogger) Panic(msg string, fields ...Field) {
 	l.target.LogFields(PanicLevel, msg, fields...)
