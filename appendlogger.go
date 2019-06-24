@@ -16,6 +16,7 @@ package log
 
 import (
 	"fmt"
+	"log"
 
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -29,6 +30,10 @@ type appendLogger struct {
 
 func (l appendLogger) Sync() error {
 	return l.logger.Sync()
+}
+
+func (l appendLogger) ToStdLogger() *log.Logger {
+	return l.logger.ToStdLogger()
 }
 
 // Panic logs an panic msg with fields and panic

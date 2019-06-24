@@ -16,6 +16,7 @@ package log
 
 import (
 	"context"
+	"log"
 
 	"go.uber.org/zap"
 )
@@ -46,6 +47,7 @@ type Logger interface {
 	WithTargets(targets ...Target) Logger
 	Named(name string) Logger
 	Unwrap() *zap.Logger
+	ToStdLogger() *log.Logger
 }
 
 // zaplogger delegates all calls to the underlying zap.Logger
@@ -56,6 +58,10 @@ type zaplogger struct {
 
 func (l zaplogger) Sync() error {
 	return l.logger.Sync()
+}
+
+func (l zaplogger) ToStdLogger() *log.Logger {
+	return zap.NewStdLog(l.logger)
 }
 
 // Panic logs an panic msg with fields and panic
@@ -174,6 +180,9 @@ func NewLogger(logger *zap.Logger) Logger {
 type emptyLogger struct{}
 
 func (empty emptyLogger) Sync() error { return nil }
+func (empty emptyLogger) ToStdLogger() *log.Logger {
+	return nil
+}
 func (empty emptyLogger) Panic(msg string, fields ...Field) {
 	panic(msg)
 }
