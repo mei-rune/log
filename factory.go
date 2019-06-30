@@ -32,6 +32,13 @@ func Span(logger Logger, span opentracing.Span, enabledLevel ...Level) Logger {
 	return logger.WithTargets(OutputToTracer(DefaultSpanLevel, span))
 }
 
+func SpanFromContext(ctx context.Context, logger Logger) Logger {
+	if span := opentracing.SpanFromContext(ctx); span != nil {
+		return Span(logger, span)
+	}
+	return logger
+}
+
 func SpanContext(logger Logger, spanContext opentracing.SpanContext, method string, enabledLevel ...Level) (Logger, func()) {
 	if spanContext == nil {
 		return logger, func() {}
