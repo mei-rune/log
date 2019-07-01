@@ -144,6 +144,11 @@ func (l appendLogger) Named(name string) Logger {
 	return appendLogger{logger: l.logger.Named(name), target: l.target}
 }
 
+func (l appendLogger) AddCallerSkip(level int) Logger {
+	logger := l.logger.AddCallerSkip(level)
+	return appendLogger{logger: logger, target: l.target}
+}
+
 func (l appendLogger) Unwrap() *zap.Logger {
 	return l.logger.Unwrap()
 }

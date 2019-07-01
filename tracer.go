@@ -21,15 +21,25 @@ type SQLTracer struct {
 
 func (w SQLTracer) Write(ctx context.Context, id, sql string, args []interface{}, err error) {
 	logger := w.Logger
-	var hasSpan = false
 	if ctx != nil {
 		logger = Span(logger, opentracing.SpanFromContext(ctx), w.SpanLevel)
-		hasSpan = opentracing.SpanFromContext(ctx) != nil
 	}
 
 	if err == nil {
-		logger.Info(sql, String("id", id), Stringer("args", sqlArgs(args)), Bool("hasSpan", hasSpan))
+		logger.Info(sql, String("id", id), Stringer("args", sqlArgs(args)))
 	} else {
-		logger.Info(sql, String("id", id), Stringer("args", sqlArgs(args)), Bool("hasSpan", hasSpan), Error(err))
+		logger.Info(sql, String("id", id), Stringer("args", sqlArgs(args)), Error(err))
+	}
+}
+
+func NewSQLTracer(logger Logger, lvl ...Level) SQLTracer {
+	var spanLevel = DefaultSpanLevel
+	if len(lvl) > 0 {
+		spanLevel = lvl[0]
+	}
+
+	return SQLTracer{
+		Logger:    logger.AddCallerSkip(1),
+		SpanLevel: spanLevel,
 	}
 }

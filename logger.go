@@ -43,6 +43,7 @@ type Logger interface {
 	Warnf(msg string, values ...interface{})
 	Fatalf(msg string, values ...interface{})
 
+	AddCallerSkip(int) Logger
 	With(fields ...Field) Logger
 	WithTargets(targets ...Target) Logger
 	Named(name string) Logger
@@ -167,6 +168,11 @@ func (l zaplogger) Named(name string) Logger {
 	return zaplogger{logger: newL, sugared: newL.Sugar()}
 }
 
+func (l zaplogger) AddCallerSkip(level int) Logger {
+	logger := l.logger.WithOptions(zap.AddCallerSkip(level))
+	return zaplogger{logger: logger, sugared: logger.Sugar()}
+}
+
 func (l zaplogger) Unwrap() *zap.Logger {
 	return l.logger
 }
@@ -204,8 +210,9 @@ func (empty emptyLogger) Errorf(msg string, values ...interface{}) {}
 func (empty emptyLogger) Warnf(msg string, values ...interface{})  {}
 func (empty emptyLogger) Fatalf(msg string, values ...interface{}) {}
 
-func (empty emptyLogger) With(fields ...Field) Logger { return empty }
-func (empty emptyLogger) Named(name string) Logger    { return empty }
+func (empty emptyLogger) AddCallerSkip(level int) Logger { return empty }
+func (empty emptyLogger) With(fields ...Field) Logger    { return empty }
+func (empty emptyLogger) Named(name string) Logger       { return empty }
 func (empty emptyLogger) WithTargets(targets ...Target) Logger {
 	if len(targets) == 0 {
 		return empty
