@@ -58,11 +58,9 @@ func SpanContext(logger Logger, spanContext opentracing.SpanContext, method stri
 // For returns a context-aware Logger. If the context
 // contains an OpenTracing span, all logging calls are also
 // echo-ed into the span.
-func For(ctx context.Context, args ...interface{}) (Logger, func()) {
+func For(ctx context.Context, args ...interface{}) Logger {
 	var logger Logger
 	var span opentracing.Span
-	var spanContext opentracing.SpanContext
-	var method string
 	var level = DefaultSpanLevel
 	var fields []Field
 
@@ -72,10 +70,6 @@ func For(ctx context.Context, args ...interface{}) (Logger, func()) {
 			logger = value
 		case opentracing.Span:
 			span = value
-		case opentracing.SpanContext:
-			spanContext = value
-		case string:
-			method = value
 		case Level:
 			level = value
 		case Field:
@@ -86,22 +80,19 @@ func For(ctx context.Context, args ...interface{}) (Logger, func()) {
 	if logger == nil {
 		logger = LoggerOrEmptyFromContext(ctx)
 	}
+
 	if len(fields) > 0 {
 		logger = logger.With(fields...)
 	}
 
 	if span != nil {
-		return Span(logger, span, level), noop
-	}
-
-	if spanContext != nil {
-		return SpanContext(logger, spanContext, method, level)
+		return Span(logger, span, level)
 	}
 
 	if span := opentracing.SpanFromContext(ctx); span != nil {
-		return Span(logger, span, level), noop
+		return Span(logger, span, level)
 	}
-	return logger, noop
+	return logger
 }
 
 var noop = func() {}
