@@ -1,6 +1,9 @@
 package log
 
 import (
+	"strconv"
+	"strings"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -109,3 +112,71 @@ var (
 	// controls how the duration is serialized.
 	Duration = zap.Duration
 )
+
+type int64Array []int64
+
+func (a int64Array) String() string {
+	var sb strings.Builder
+	for idx, v := range a {
+		if idx != 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(strconv.FormatInt(v, 10))
+	}
+	return sb.String()
+}
+
+func Int64Array(name string, a []int64) Field {
+	return Stringer(name, int64Array(a))
+}
+
+type intArray []int
+
+func (a intArray) String() string {
+	var sb strings.Builder
+	for idx, v := range a {
+		if idx != 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(strconv.FormatInt(int64(v), 10))
+	}
+	return sb.String()
+}
+
+func IntArray(name string, a []int) Field {
+	return Stringer(name, intArray(a))
+}
+
+type uint64Array []uint64
+
+func (a uint64Array) String() string {
+	var sb strings.Builder
+	for idx, v := range a {
+		if idx != 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(strconv.FormatUint(v, 10))
+	}
+	return sb.String()
+}
+
+func Uint64Array(name string, a []uint64) Field {
+	return Stringer(name, uint64Array(a))
+}
+
+type uintArray []uint
+
+func (a uintArray) String() string {
+	var sb strings.Builder
+	for idx, v := range a {
+		if idx != 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(strconv.FormatUint(uint64(v), 10))
+	}
+	return sb.String()
+}
+
+func UintArray(name string, a []uint) Field {
+	return Stringer(name, uintArray(a))
+}
