@@ -3,14 +3,37 @@ package log
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	opentracing "github.com/opentracing/opentracing-go"
 )
 
-type sqlArgs []interface{}
+type SQLArgs []interface{}
 
-func (args sqlArgs) String() string {
-	return fmt.Sprintf("%#v", args)
+func (args SQLArgs) String() string {
+	if len(args) == 0 {
+		return "[]"
+	}
+	var sb strings.Builder
+	sb.WriteString("[")
+	for i := range args {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		if bs, ok := args[i].([]byte); ok {
+			sb.WriteString("`")
+			sb.Write(bs)
+			sb.WriteString("`")
+		} else {
+			fmt.Fprint(&sb, args[i])
+		}
+	}
+	sb.WriteString("]")
+	return sb.String()
+}
+
+func AnyArray(args []interface{}) fmt.Stringer {
+	return SQLArgs(args)
 }
 
 // SQLTracer 是 github.com/runner-mei/GoBatis 的 Tracer
@@ -26,9 +49,9 @@ func (w SQLTracer) Write(ctx context.Context, id, sql string, args []interface{}
 	}
 
 	if err == nil {
-		logger.Info(sql, String("id", id), Stringer("args", sqlArgs(args)))
+		logger.Info(sql, String("id", id), Stringer("args", SQLArgs(args)))
 	} else {
-		logger.Info(sql, String("id", id), Stringer("args", sqlArgs(args)), Error(err))
+		logger.Info(sql, String("id", id), Stringer("args", SQLArgs(args)), Error(err))
 	}
 }
 
