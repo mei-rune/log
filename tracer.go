@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	opentracing "github.com/opentracing/opentracing-go"
 )
@@ -23,6 +24,14 @@ func (args SQLArgs) String() string {
 		if bs, ok := args[i].([]byte); ok {
 			sb.WriteString("`")
 			sb.Write(bs)
+			sb.WriteString("`")
+		} else if s, ok := args[i].(string); ok {
+			sb.WriteString("`")
+			sb.WriteString(s)
+			sb.WriteString("`")
+		} else if t, ok := args[i].(time.Time); ok {
+			sb.WriteString("`")
+			sb.WriteString(t.Format(time.RFC3339Nano))
 			sb.WriteString("`")
 		} else {
 			fmt.Fprint(&sb, args[i])
