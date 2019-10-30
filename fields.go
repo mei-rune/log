@@ -180,3 +180,26 @@ func (a uintArray) String() string {
 func UintArray(name string, a []uint) Field {
 	return Stringer(name, uintArray(a))
 }
+
+type stringArray []string
+
+func (a stringArray) String() string {
+	var sb strings.Builder
+	for idx, s := range a {
+		if idx != 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(s)
+	}
+	return sb.String()
+}
+
+func StringArray(name string, a []string) Field {
+	return Stringer(name, stringArray(a))
+}
+
+type StringerFunc func() string
+
+func (s StringerFunc) String() string {
+	return s()
+}
