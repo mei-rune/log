@@ -240,10 +240,13 @@ func ContextWithLogger(ctx context.Context, logger Logger) context.Context {
 
 // LoggerFromContext returns the `logger` previously associated with `ctx`, or
 // `nil` if no such `logger` could be found.
-func LoggerFromContext(ctx context.Context) Logger {
+func LoggerFromContext(ctx context.Context, defaultLogger ...Logger) Logger {
 	val := ctx.Value(activeLoggerKey)
 	if sp, ok := val.(Logger); ok {
 		return sp
+	}
+	if len(defaultLogger) > 0 {
+		return defaultLogger[0]
 	}
 	return nil
 }
