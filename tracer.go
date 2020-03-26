@@ -58,9 +58,9 @@ func (w SQLTracer) Write(ctx context.Context, id, sql string, args []interface{}
 	}
 
 	if err == nil {
-		logger.Info(sql, String("id", id), Stringer("args", SQLArgs(args)))
+		logger.Debug(sql, String("id", id), Stringer("args", SQLArgs(args)))
 	} else {
-		logger.Info(sql, String("id", id), Stringer("args", SQLArgs(args)), Error(err))
+		logger.Debug(sql, String("id", id), Stringer("args", SQLArgs(args)), Error(err))
 	}
 }
 
@@ -71,7 +71,7 @@ func NewSQLTracer(logger Logger, lvl ...Level) SQLTracer {
 	}
 
 	return SQLTracer{
-		Logger:    logger.AddCallerSkip(1),
+		Logger:    logger.AddCallerSkip(4),
 		SpanLevel: spanLevel,
 	}
 }
