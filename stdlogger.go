@@ -25,11 +25,20 @@ func (l stdlogger) ToStdLogger() *stdlog.Logger {
 }
 
 func (l stdlogger) log(level Level, msg string, fields []Field) {
-	l.logger.Println(level, msg, append(l.fields, fields...))
+	l.logger.Output(l.callerSkip, fmt.Sprint(level, " ", msg, " ", append(l.fields, fields...)))
+
+	if level == FatalLevel {
+		panic(msg)
+	}
 }
 
-func (l stdlogger) logf(level Level, msg string, args ...interface{}) {
-	l.logger.Println(level, fmt.Sprintf(msg, args))
+func (l stdlogger) logf(level Level, msgfmt string, args []interface{}) {
+	msg := fmt.Sprintf(msgfmt, args...)
+	l.logger.Output(l.callerSkip, level.String()+" "+msg+" "+fmt.Sprint(l.fields))
+
+	if level == FatalLevel {
+		panic(msg)
+	}
 }
 
 // Panic logs an panic msg with fields and panic
@@ -119,7 +128,7 @@ func (l stdlogger) Fatalf(msg string, args ...interface{}) {
 
 // With creates a child logger, and optionally adds some context fields to that logger.
 func (l stdlogger) With(fields ...Field) Logger {
-	return stdlogger{fields: append(l.fields, fields...), logger: l.logger}
+	return stdlogger{fields: append(l.fields, fields...), logger: l.logger, callerSkip: l.callerSkip}
 }
 
 // With creates a child logger, and optionally adds some context fields to that logger.
@@ -140,7 +149,7 @@ func (l stdlogger) Named(name string) Logger {
 	} else {
 		newName = newName + "." + name
 	}
-	return stdlogger{name: newName, logger: l.logger}
+	return stdlogger{name: newName, logger: l.logger, callerSkip: l.callerSkip}
 }
 
 func (l stdlogger) AddCallerSkip(level int) Logger {
@@ -152,5 +161,5 @@ func (l stdlogger) Unwrap() *zap.Logger {
 }
 
 func NewStdLogger(logger *stdlog.Logger) Logger {
-	return stdlogger{callerSkip: 1, logger: logger}
+	return stdlogger{callerSkip: 3, logger: logger}
 }

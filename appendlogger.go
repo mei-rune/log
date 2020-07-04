@@ -99,27 +99,27 @@ func (l appendLogger) Fatalw(msg string, keyAndValues ...interface{}) {
 
 // Debugf logs an info msg with fields
 func (l appendLogger) Debugf(msg string, values ...interface{}) {
-	l.Debug(fmt.Sprintf(msg, values))
+	l.Debug(fmt.Sprintf(msg, values...))
 }
 
 // Infof logs an info msg with fields
 func (l appendLogger) Infof(msg string, values ...interface{}) {
-	l.Info(fmt.Sprintf(msg, values))
+	l.Info(fmt.Sprintf(msg, values...))
 }
 
 // Warnf logs an error msg with fields
 func (l appendLogger) Warnf(msg string, values ...interface{}) {
-	l.Warn(fmt.Sprintf(msg, values))
+	l.Warn(fmt.Sprintf(msg, values...))
 }
 
 // Errorf logs an error msg with fields
 func (l appendLogger) Errorf(msg string, values ...interface{}) {
-	l.Error(fmt.Sprintf(msg, values))
+	l.Error(fmt.Sprintf(msg, values...))
 }
 
 // Fatalf logs a fatal error msg with fields
 func (l appendLogger) Fatalf(msg string, values ...interface{}) {
-	l.Fatal(fmt.Sprintf(msg, values))
+	l.Fatal(fmt.Sprintf(msg, values...))
 }
 
 // // With creates a child logger, and optionally adds some context fields to that logger.
