@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"go.uber.org/zap"
@@ -166,6 +167,24 @@ func (l zaplogger) Unwrap() *zap.Logger {
 func NewLogger(logger *zap.Logger) Logger {
 	logger = logger.WithOptions(zap.AddCallerSkip(1))
 	return zaplogger{logger: logger, sugared: logger.Sugar()}
+}
+
+func NewZapLogger() Logger {
+	logConfig := zap.NewProductionConfig()
+	logger, err := logConfig.Build()
+	if err != nil {
+		panic(errors.New("init zap logger fail: " + err.Error()))
+	}
+	return NewLogger(logger)
+}
+
+func NewDebugZapLogger() Logger {
+	logConfig := zap.NewDevelopmentConfig()
+	logger, err := logConfig.Build()
+	if err != nil {
+		panic(errors.New("init zap logger fail: " + err.Error()))
+	}
+	return NewLogger(logger)
 }
 
 // Logger is a simplified abstraction of the zap.Logger
