@@ -100,3 +100,16 @@ var noop = func() {}
 func IsEmpty(logger Logger) bool {
 	return logger == empty
 }
+
+func CloneContext(src, dst context.Context) context.Context {
+	logger := LoggerFromContext(src)
+	if logger != nil {
+		dst = ContextWithLogger(dst, logger)
+	}
+
+	span := opentracing.SpanFromContext(src)
+	if span != nil {
+		dst = opentracing.ContextWithSpan(dst, span)
+	}
+	return dst
+}
