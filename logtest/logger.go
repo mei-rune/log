@@ -19,6 +19,10 @@ func NewLogger(t testing.TB) log.Logger {
 	return log.NewLogger(logger)
 }
 
+func New() log.Logger {
+	return log.NewStdDefaultLogger()
+}
+
 func NewBufferLogger() (log.Logger, *zaptest.Buffer) {
 	errSink := &zaptest.Buffer{}
 	logger := zap.New(

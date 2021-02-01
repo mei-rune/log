@@ -25,7 +25,11 @@ func (l stdlogger) ToStdLogger() *stdlog.Logger {
 }
 
 func (l stdlogger) log(level Level, msg string, fields []Field) {
-	l.logger.Output(l.callerSkip, fmt.Sprint(level, " ", msg, " ", append(l.fields, fields...)))
+	if l.logger == nil {
+		stdlog.Output(l.callerSkip, fmt.Sprint(level, " ", msg, " ", append(l.fields, fields...)))
+	} else {
+		l.logger.Output(l.callerSkip, fmt.Sprint(level, " ", msg, " ", append(l.fields, fields...)))
+	}
 
 	if level == FatalLevel {
 		panic(msg)
@@ -34,7 +38,11 @@ func (l stdlogger) log(level Level, msg string, fields []Field) {
 
 func (l stdlogger) logf(level Level, msgfmt string, args []interface{}) {
 	msg := fmt.Sprintf(msgfmt, args...)
-	l.logger.Output(l.callerSkip, level.String()+" "+msg+" "+fmt.Sprint(l.fields))
+	if l.logger == nil {
+		stdlog.Output(l.callerSkip, level.String()+" "+msg+" "+fmt.Sprint(l.fields))
+	} else {
+		l.logger.Output(l.callerSkip, level.String()+" "+msg+" "+fmt.Sprint(l.fields))
+	}
 
 	if level == FatalLevel {
 		panic(msg)
@@ -162,4 +170,8 @@ func (l stdlogger) Unwrap() *zap.Logger {
 
 func NewStdLogger(logger *stdlog.Logger) Logger {
 	return stdlogger{callerSkip: 3, logger: logger}
+}
+
+func NewStdDefaultLogger() Logger {
+	return stdlogger{callerSkip: 3}
 }
