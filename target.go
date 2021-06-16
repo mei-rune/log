@@ -14,6 +14,15 @@ type Target interface {
 	LogFields(level Level, msg string, fields ...Field)
 }
 
+type withFields struct {
+	fields []Field
+	out Target
+}
+
+func (wf withFields) LogFields(level Level, msg string, fields ...Field) {
+  wf.out.LogFields(level, msg, append(fields, wf.fields...)...)
+}
+
 type Tee []Target
 
 func (sl Tee) LogFields(level Level, msg string, fields ...Field) {
