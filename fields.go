@@ -10,6 +10,8 @@ import (
 
 type Field = zapcore.Field
 type Level = zapcore.Level
+type ArrayMarshaler = zapcore.ArrayMarshaler
+type ObjectMarshaler = zapcore.ObjectMarshaler
 
 const (
 	// DebugLevel logs are typically voluminous, and are usually disabled in
@@ -202,4 +204,8 @@ type StringerFunc func() string
 
 func (s StringerFunc) String() string {
 	return s()
+}
+
+func StringFunc(name string, cb func() string) Field {
+	return Stringer(name, StringerFunc(cb))
 }
