@@ -54,6 +54,7 @@ type SQLTracer struct {
 func (w SQLTracer) Write(ctx context.Context, id, sql string, args []interface{}, err error) {
 	logger := w.Logger
 	if ctx != nil {
+		logger = LoggerFromContext(ctx, logger)
 		logger = Span(logger, opentracing.SpanFromContext(ctx), w.SpanLevel)
 	}
 
