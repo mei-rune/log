@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 // Logger is a simplified abstraction of the zap.Logger
@@ -176,6 +178,27 @@ func NewZapLogger() Logger {
 		panic(errors.New("init zap logger fail: " + err.Error()))
 	}
 	return NewLogger(logger)
+}
+
+func NewFile(filename string, level ...Level) Logger {
+	lumberJackLogger := &lumberjack.Logger{
+		Filename:   filename, // ⽇志⽂件路径
+		MaxSize:    5,        // 1M=1024KB=1024000byte
+		MaxBackups: 5,        // 最多保留5个备份
+		MaxAge:     30,       // days
+		Compress:   false,    // 是否压缩 disabled by default
+	}
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+
+	lvl := zapcore.DebugLevel
+	if len(level) > 0 {
+		lvl = level[0]
+	}
+	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig),
+		zapcore.AddSync(lumberJackLogger), lvl)
+	return NewLogger(zap.New(core, zap.AddCaller()))
 }
 
 func NewDebugZapLogger() Logger {

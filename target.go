@@ -16,11 +16,11 @@ type Target interface {
 
 type withFields struct {
 	fields []Field
-	out Target
+	out    Target
 }
 
 func (wf withFields) LogFields(level Level, msg string, fields ...Field) {
-  wf.out.LogFields(level, msg, append(fields, wf.fields...)...)
+	wf.out.LogFields(level, msg, append(fields, wf.fields...)...)
 }
 
 type Tee []Target

@@ -131,7 +131,7 @@ func (l appendLogger) Fatalf(msg string, values ...interface{}) {
 func (l appendLogger) With(fields ...Field) Logger {
 	return appendLogger{logger: l.logger.With(fields...), target: withFields{
 		fields: fields,
-		out: l.target,
+		out:    l.target,
 	}}
 }
 
