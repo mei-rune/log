@@ -81,31 +81,31 @@ func (l stdlogger) Fatal(msg string, fields ...Field) {
 
 // Debugw logs an debug msg with fields
 func (l stdlogger) Debugw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.log(DebugLevel, msg, fields)
 }
 
 // Infow logs an info msg with fields
 func (l stdlogger) Infow(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.log(InfoLevel, msg, fields)
 }
 
 // Warnw logs an error msg with fields
 func (l stdlogger) Warnw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.log(WarnLevel, msg, fields)
 }
 
 // Errorw logs an error msg with fields
 func (l stdlogger) Errorw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.log(ErrorLevel, msg, fields)
 }
 
 // Fatalw logs a fatal error msg with fields
 func (l stdlogger) Fatalw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.log(FatalLevel, msg, fields)
 }
 

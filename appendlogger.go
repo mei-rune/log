@@ -69,31 +69,31 @@ func (l appendLogger) Fatal(msg string, fields ...Field) {
 
 // Debugw logs an debug msg with fields
 func (l appendLogger) Debugw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.Debug(msg, fields...)
 }
 
 // Infow logs an info msg with fields
 func (l appendLogger) Infow(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.Info(msg, fields...)
 }
 
 // Warnw logs an error msg with fields
 func (l appendLogger) Warnw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.Warn(msg, fields...)
 }
 
 // Errorw logs an error msg with fields
 func (l appendLogger) Errorw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.Error(msg, fields...)
 }
 
 // Fatalw logs a fatal error msg with fields
 func (l appendLogger) Fatalw(msg string, keyAndValues ...interface{}) {
-	fields := sweetenFields(l, keyAndValues)
+	fields := SweetenFields(l, keyAndValues)
 	l.Fatal(msg, fields...)
 }
 
@@ -161,7 +161,7 @@ const (
 	_nonStringKeyErrMsg = "Ignored key-value pairs with non-string keys."
 )
 
-func sweetenFields(base Logger, args []interface{}) []Field {
+func SweetenFields(base Logger, args []interface{}) []Field {
 	if len(args) == 0 {
 		return nil
 	}
