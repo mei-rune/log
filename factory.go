@@ -101,12 +101,10 @@ func IsEmpty(logger Logger) bool {
 	return logger == empty
 }
 
-func CloneContext(src context.Context, target ...context.Context) context.Context {
-	var dst context.Context
-	if len(target) > 0 {
-		dst = target[0]
-	} else {
-		dst = context.Background()
+func CloneContext(src context.Context, to ...context.Context) context.Context {
+	var dst = context.Background()
+	if len(to) > 0 {
+		dst = to[0]
 	}
 	logger := LoggerFromContext(src)
 	if logger != nil {
