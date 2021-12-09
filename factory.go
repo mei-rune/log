@@ -101,7 +101,13 @@ func IsEmpty(logger Logger) bool {
 	return logger == empty
 }
 
-func CloneContext(src, dst context.Context) context.Context {
+func CloneContext(src context.Context, target ...context.Context) context.Context {
+	var dst context.Context
+	if len(target) > 0 {
+		dst = target[0]
+	} else {
+		dst = context.Background()
+	}
 	logger := LoggerFromContext(src)
 	if logger != nil {
 		dst = ContextWithLogger(dst, logger)
