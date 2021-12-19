@@ -49,6 +49,7 @@ func AnyArray(args []interface{}) fmt.Stringer {
 type SQLTracer struct {
 	Logger    Logger
 	SpanLevel Level
+	LogLevel Level
 }
 
 func (w SQLTracer) Write(ctx context.Context, id, sql string, args []interface{}, err error) {
@@ -57,7 +58,14 @@ func (w SQLTracer) Write(ctx context.Context, id, sql string, args []interface{}
 		logger = LoggerFromContext(ctx, logger)
 		logger = Span(logger, opentracing.SpanFromContext(ctx), w.SpanLevel)
 	}
-
+	if w.LogLevel == InfoLevel {
+		if err == nil {
+			logger.Info(sql, String("id", id), Stringer("args", SQLArgs(args)))
+		} else {
+			logger.Info(sql, String("id", id), Stringer("args", SQLArgs(args)), Error(err))
+		}
+		return 
+	}
 	if err == nil {
 		logger.Debug(sql, String("id", id), Stringer("args", SQLArgs(args)))
 	} else {
@@ -74,5 +82,19 @@ func NewSQLTracer(logger Logger, lvl ...Level) SQLTracer {
 	return SQLTracer{
 		Logger:    logger.AddCallerSkip(4),
 		SpanLevel: spanLevel,
+		LogLevel:  InfoLevel,
+	}
+}
+
+func NewDebugSQLTracer(logger Logger, lvl ...Level) SQLTracer {
+	var spanLevel = DefaultSpanLevel
+	if len(lvl) > 0 {
+		spanLevel = lvl[0]
+	}
+
+	return SQLTracer{
+		Logger:    logger.AddCallerSkip(4),
+		SpanLevel: spanLevel,
+		LogLevel:  DebugLevel,
 	}
 }
