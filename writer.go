@@ -8,7 +8,16 @@ import (
 )
 
 func New(out io.Writer) Logger {
-	logger, _ := zap.NewProductionConfig().
-		Build(zap.ErrorOutput(zapcore.AddSync(out)))
+	outSink := zapcore.Lock(zapcore.AddSync(out))
+
+	cfg := zap.NewProductionConfig()
+	logger := zap.New(
+		zapcore.NewCore(
+			zapcore.NewJSONEncoder(cfg.EncoderConfig),
+			outSink,
+			cfg.Level,
+		),
+		zap.ErrorOutput(outSink),
+	)
 	return NewLogger(logger)
 }
