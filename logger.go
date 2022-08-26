@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"io"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -180,7 +181,7 @@ func NewZapLogger() Logger {
 	return NewLogger(logger)
 }
 
-func NewFile(filename string, level ...Level) Logger {
+func NewFile(filename string, level ...Level) (Logger, io.WriteCloser) {
 	lumberJackLogger := &lumberjack.Logger{
 		Filename:   filename, // ⽇志⽂件路径
 		MaxSize:    5,        // 1M=1024KB=1024000byte
@@ -198,7 +199,7 @@ func NewFile(filename string, level ...Level) Logger {
 	}
 	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig),
 		zapcore.AddSync(lumberJackLogger), lvl)
-	return NewLogger(zap.New(core, zap.AddCaller()))
+	return NewLogger(zap.New(core, zap.AddCaller())), lumberJackLogger
 }
 
 func NewDebugZapLogger() Logger {
