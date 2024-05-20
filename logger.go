@@ -9,6 +9,8 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"golang.org/x/exp/slog"
+	"github.com/runner-mei/log/exp/zapslog"
 )
 
 // Logger is a simplified abstraction of the zap.Logger
@@ -39,6 +41,7 @@ type Logger interface {
 	Named(name string) Logger
 	Unwrap() *zap.Logger
 	ToStdLogger() *log.Logger
+	ToSlogger() *slog.Logger
 }
 
 // zaplogger delegates all calls to the underlying zap.Logger
@@ -167,6 +170,11 @@ func (l zaplogger) Unwrap() *zap.Logger {
 	return l.logger
 }
 
+func (l zaplogger) ToSlogger() *slog.Logger {
+	return slog.New(zapslog.NewHandler(l.logger.Core()))
+	// return slog.New(slogzap.Option{Level: slog.LevelInfo, Logger: env.Logger}.NewZapHandler())
+}
+
 func NewLogger(logger *zap.Logger) Logger {
 	logger = logger.WithOptions(zap.AddCallerSkip(1))
 	return zaplogger{logger: logger, sugared: logger.Sugar()}
@@ -216,6 +224,9 @@ type emptyLogger struct{}
 
 func (empty emptyLogger) Sync() error { return nil }
 func (empty emptyLogger) ToStdLogger() *log.Logger {
+	return nil
+}
+func (empty emptyLogger) ToSlogger() *slog.Logger {
 	return nil
 }
 func (empty emptyLogger) Panic(msg string, fields ...Field) {

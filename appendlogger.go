@@ -21,6 +21,7 @@ import (
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"golang.org/x/exp/slog"
 )
 
 type appendLogger struct {
@@ -34,6 +35,11 @@ func (l appendLogger) Sync() error {
 
 func (l appendLogger) ToStdLogger() *log.Logger {
 	return l.logger.ToStdLogger()
+}
+
+
+func (l appendLogger) ToSlogger() *slog.Logger {
+	return l.logger.ToSlogger()
 }
 
 // Panic logs an panic msg with fields and panic

@@ -5,6 +5,7 @@ import (
 	stdlog "log"
 
 	"go.uber.org/zap"
+	"golang.org/x/exp/slog"
 )
 
 // stdlogger delegates all calls to the underlying zap.Logger
@@ -22,6 +23,10 @@ func (l stdlogger) Sync() error {
 
 func (l stdlogger) ToStdLogger() *stdlog.Logger {
 	return l.logger
+}
+
+func (l stdlogger) ToSlogger() *slog.Logger {
+	return nil
 }
 
 func (l stdlogger) log(level Level, msg string, fields []Field) {
